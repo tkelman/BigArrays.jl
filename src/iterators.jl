@@ -72,12 +72,16 @@ function Base.next{N}(  iter    ::BigArrayIterator{N},
                             iter.offset )...))
     # the global range of the cutout in this chunk
     globalRange = CartesianRange(start, stop)
+    @show globalRange
     # the range inside this chunk
     rangeInChunk  = global_range2chunk_range( globalRange, iter.chunkSize, iter.offset)
+    @show rangeInChunk 
     # the range inside the buffer
     rangeInBuffer = global_range2buffer_range(globalRange, iter.globalRange)
+    @show rangeInBuffer
     # the global range of this chunk
     chunkGlobalRange = chunkid2global_range( chunkID, iter.chunkSize, iter.offset )
+    @show chunkGlobalRange
     return (chunkID, chunkGlobalRange, globalRange, rangeInChunk, rangeInBuffer), state
 end
 
