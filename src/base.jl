@@ -45,7 +45,8 @@ end
 function do_work_setindex{D,T,N,C}( chan::Channel{Tuple}, buf::Array{T,N}, ba::BigArray{D,T,N,C}, chk::Array{T,N} )
     for (blockID, chunkGlobalRange, globalRange, rangeInChunk, rangeInBuffer) in chan
         println("global range of chunk: $(string(chunkGlobalRange))")
-        fill!(chk, convert(T, 0))
+        #fill!(chk, convert(T, 0))
+        chk = ba[cartesian_range2unitrange(chunkGlobalRange)...]
         delay = 0.05
         for t in 1:4
             try 
@@ -127,7 +128,13 @@ function do_work_getindex!{D,T,N,C}(chan::Channel{Tuple}, buf::Array, ba::BigArr
     end
 end
 
-function Base.getindex{D,T,N,C}( ba::BigArray{D, T, N, C}, idxes::Union{UnitRange, Int}...)
+function Base.getindex{D,T,N,C}( ba::BigArray{D,T,N,C}, 
+                    idxes::CartesianRange{CartesianIndex{N}} )
+    ba[cartesian_range2unitrange(idxes)...]
+end
+
+function Base.getindex{D,T,N,C}( ba::BigArray{D, T, N, C}, 
+                    idxes::Union{UnitRange, Int}...)
     sz = map(length, idxes)
     buf = zeros(eltype(ba), sz)
 
