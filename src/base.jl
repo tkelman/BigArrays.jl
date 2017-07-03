@@ -49,6 +49,8 @@ function do_work_setindex{D,T,N,C}( chan::Channel{Tuple}, buf::Array{T,N}, ba::B
         delay = 0.05
         for t in 1:4
             try 
+                data = ba.kvStore[ string(chunkGlobalRange) ]
+                chk = reshape(reinterpret(T,decoding(data,C)), size(chk))
                 chk[rangeInChunk] = buf[rangeInBuffer]
                 ba.kvStore[ string(chunkGlobalRange) ] = encoding( chk, C)
                 break
