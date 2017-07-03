@@ -111,8 +111,9 @@ function do_work_getindex!{D,T,N,C}(chan::Channel{Tuple}, buf::Array, ba::BigArr
                 break 
             catch e
                 println("catch an error while getindex in BigArray: $e")
-                if isa(e, NoSuchKeyException)
-                    println("no suck key in kvstore: $(e), will fill this block as zeros")
+                if isa(e, NoSuchKeyException) || isa(e, KeyError)
+                    println("no suck key in kvstore: $(e), code in BigArrays/src/base.jl")
+                    @show typeof(e)
                     break
                 else
                     if isa(e, EOFError)
