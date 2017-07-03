@@ -46,12 +46,10 @@ function do_work_setindex{D,T,N,C}( chan::Channel{Tuple}, buf::Array{T,N}, ba::B
     for (blockID, chunkGlobalRange, globalRange, rangeInChunk, rangeInBuffer) in chan
         println("global range of chunk: $(string(chunkGlobalRange))")
         fill!(chk, convert(T, 0))
+        #chk = ba[chunkGlobalRange]
         delay = 0.05
         for t in 1:4
-            try 
-                data = ba.kvStore[ string(chunkGlobalRange) ]
-                chk = reshape(reinterpret(T,decoding(data,C)), size(chk))
-                chk[rangeInChunk] = buf[rangeInBuffer]
+            try
                 ba.kvStore[ string(chunkGlobalRange) ] = encoding( chk, C)
                 break
             catch e
@@ -128,6 +126,10 @@ function do_work_getindex!{D,T,N,C}(chan::Channel{Tuple}, buf::Array, ba::BigArr
             end 
         end
     end
+end
+
+function Base.getindex{D,T,N,C}( ba::BigArray{D,T,N,C}, idxes::CartesianRange{CartesianIndex{N}} )
+    ba[cartesian_range2unitrange(idxes)...]
 end
 
 function Base.getindex{D,T,N,C}( ba::BigArray{D, T, N, C}, idxes::Union{UnitRange, Int}...)

@@ -16,6 +16,7 @@ a = rand(UInt8, 200,200,10)
 @time ba[501:700, 501:700, 121:130] = a
 # BigArrays.mysetindex!(ba, a, (201:400, 201:400, 101:110))
 @time b = ba[501:700, 501:700, 121:130]
+@show a.-b
 @assert all(a.==b)
 
 info("\n test single voxel indexing ...")
